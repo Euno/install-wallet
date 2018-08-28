@@ -33,7 +33,7 @@
 
 ### Usage:
     
-    To run direcrtly from github:
+    To run directly from github:
     bash <(curl -s https://raw.githubusercontent.com/Euno/install-wallet/master/install-wallet.sh)
 
     or download the script and execute:
