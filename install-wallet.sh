@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 ################################################################################
 # Original Author: Euno DevTeam
 # Github: https://github.com/Euno/install-wallet
@@ -12,6 +12,13 @@
 # Raspberry PI 2 & 3 with Raspbian Stretch
 #
 ################################################################################
+
+# Backup wallet.dat
+
+    if [[ -d ~/.euno ]]; then
+          cd ~/.euno
+          cp wallet.dat walletSAVE.save 2>/dev/null && cd
+    fi
 
 show_menu(){
 	NORMAL=`echo "\033[m"`
@@ -67,7 +74,14 @@ euno_ubuntu_cli(){
 		echo ""
 		echo -e "${MENU} ** Downloading EUNO source code from Github ** ${NORMAL}"
 		cd ~
-		git clone https://github.com/Euno/eunowallet.git
+		
+		if [[ -d ~/eunowallet ]]; then
+			cd ~/eunowallet
+			echo -e "${MENU} ** Git pull ** ${NORMAL}"
+			git pull
+		else
+			git clone https://github.com/Euno/eunowallet.git
+		fi
 
 		echo ""
 		echo -e "${MENU} ** Compiling LevelDB ** ${NORMAL}"
@@ -156,7 +170,14 @@ euno_ubuntu_gui(){
 		echo ""
 		echo -e "${MENU} ** Downloading EUNO source code from Github ** ${NORMAL}"
 		cd ~
-		git clone https://github.com/Euno/eunowallet.git
+
+                if [[ -d ~/eunowallet ]]; then
+                        cd ~/eunowallet
+                        echo -e "${MENU} ** Git pull ** ${NORMAL}"
+                        git pull
+                else
+                        git clone https://github.com/Euno/eunowallet.git
+                fi
 
 		echo ""
 		echo -e "${MENU} ** Compiling LevelDB ** ${NORMAL}"
@@ -253,7 +274,14 @@ euno_raspberry_cli(){
 		echo ""
 		echo -e "${MENU} ** Downloading EUNO source code from Github ** ${NORMAL}"
 		cd ~
-		git clone https://github.com/Euno/eunowallet.git
+
+                if [[ -d ~/eunowallet ]]; then
+                        cd ~/eunowallet
+                        echo -e "${MENU} ** Git pull ** ${NORMAL}"
+			git pull
+                else
+                        git clone https://github.com/Euno/eunowallet.git
+                fi
 
 		echo ""
 		echo -e "${MENU} ** Compiling LevelDB ** ${NORMAL}"
@@ -351,7 +379,14 @@ option_picked "Install EUNO GUI Wallet on Raspberry Pi";
 		echo ""
 		echo -e "${MENU} ** Downloading EUNO source code from Github ** ${NORMAL}"
 		cd ~
-		git clone https://github.com/Euno/eunowallet.git
+
+                if [[ -d ~/eunowallet ]]; then
+                        cd ~/eunowallet
+                        echo -e "${MENU} ** Git pull ** ${NORMAL}"
+			git pull
+                else
+                        git clone https://github.com/Euno/eunowallet.git
+                fi
 
 		echo ""
 		echo -e "${MENU} ** Compiling LevelDB ** ${NORMAL}"
