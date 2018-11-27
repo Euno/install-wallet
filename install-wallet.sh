@@ -17,7 +17,7 @@
 
     if [[ -d ~/.euno ]]; then
           cd ~/.euno
-          cp wallet.dat walletSAVE.save 2>/dev/null && cd
+	  cp wallet.dat walletBACKUP.$(date +%H%M-%h%d%Y) 2>/dev/null && cd
     fi
 
 show_menu(){
