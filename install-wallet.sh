@@ -84,23 +84,6 @@ euno_ubuntu_cli(){
 		fi
 
 		echo ""
-		echo -e "${MENU} ** Compiling LevelDB ** ${NORMAL}"
-		cd ~/eunowallet/src/leveldb
-		make clean
-		chmod +x build_detect_platform
-		make libleveldb.a libmemenv.a
-
-		echo ""
-		echo -e "${MENU} ** Compiling SECP256 ** ${NORMAL}"
-		cd ~/eunowallet/src/secp256k1
-		make clean
-		chmod +x autogen.sh
-		./autogen.sh
-		./configure --prefix=/usr
-		make
-		sudo make install
-
-		echo ""
 		echo -e "${MENU} ** Compiling EUNO Wallet (may take a while) ** ${NORMAL}"
 		mkdir ~/.euno/ 2>/dev/null
 		cd ~/eunowallet/src/
@@ -180,23 +163,6 @@ euno_ubuntu_gui(){
                 fi
 
 		echo ""
-		echo -e "${MENU} ** Compiling LevelDB ** ${NORMAL}"
-		cd ~/eunowallet/src/leveldb
-		make clean
-		chmod +x build_detect_platform
-		make libleveldb.a libmemenv.a
-
-		echo ""
-		echo -e "${MENU} ** Compiling SECP256 ** ${NORMAL}"
-		cd ~/eunowallet/src/secp256k1
-		make clean
-		chmod +x autogen.sh
-		./autogen.sh
-		./configure --prefix=/usr
-		make
-		sudo make install
-
-		echo ""
 		echo -e "${MENU} ** Compiling EUNO Wallet (may take a while) ** ${NORMAL}"
 		mkdir ~/.euno/ 2>/dev/null
 		cd ~/eunowallet/
@@ -251,13 +217,28 @@ euno_raspberry_cli(){
 		sudo apt-get install -y unzip
 
     		echo -e "${MENU}** Raspberry Pi detected; modifying libssl-dev repository ** ${NORMAL}"
-    		sudo apt-get remove -y libssl-dev
-    		sudo apt-get install -y zlib1g-dev
-    		sudo sed -i -e 's/stretch/jessie/g' /etc/apt/sources.list
-    		sudo apt-get -y update
-    		sudo apt-get install -y libssl-dev
-    		sudo sed -i -e 's/jessie/stretch/g' /etc/apt/sources.list
-  	        sudo apt-get -y update
+		isOSpi=$(cat /etc/os-release 2>/dev/null |grep ^VERSION_CODENAME= | awk -F= '{print $2}')
+		if [[ "$isOSpi” == “buster” ]];
+		   then
+			sudo apt-get remove -y libssl-dev
+			sudo apt-get install -y zlib1g-dev
+			sudo sed -i -e “s/buster/jessie/g” /etc/apt/sources.list
+			sudo apt-get -y update
+			sudo apt-get install -y libssl-dev=1.0.1*
+			sudo sed -i -e “s/jessie/buster/g” /etc/apt/sources.list
+		      sudo apt-get -y update
+		fi
+
+		if [[ "$isOSpi” == “stretch” ]];
+		   then
+			sudo apt-get remove -y libssl-dev
+			sudo apt-get install -y zlib1g-dev
+			sudo sed -i -e “s/stretch/jessie/g” /etc/apt/sources.list
+			sudo apt-get -y update
+			sudo apt-get install -y libssl-dev=1.0.1*
+			sudo sed -i -e “s/jessie/stretch/g” /etc/apt/sources.list
+		      sudo apt-get -y update
+		fi
 
 		lineSwap=$(awk '/MemTotal/ { print $2 }' /proc/meminfo)
 
@@ -282,23 +263,6 @@ euno_raspberry_cli(){
                 else
                         git clone https://github.com/Euno/eunowallet.git
                 fi
-
-		echo ""
-		echo -e "${MENU} ** Compiling LevelDB ** ${NORMAL}"
-		cd ~/eunowallet/src/leveldb
-		make clean
-		chmod +x build_detect_platform
-		make libleveldb.a libmemenv.a
-
-		echo ""
-		echo -e "${MENU} ** Compiling SECP256 ** ${NORMAL}"
-		cd ~/eunowallet/src/secp256k1
-		make clean
-		chmod +x autogen.sh
-		./autogen.sh
-		./configure --prefix=/usr
-		make
-		sudo make install
 
 		echo ""
 		echo -e "${MENU} ** Compiling EUNO Wallet (may take a while) ** ${NORMAL}"
@@ -356,13 +320,28 @@ option_picked "Install EUNO GUI Wallet on Raspberry Pi";
 		sudo apt-get install -y qt5-default qttools5-dev-tools
 
     		echo -e "${MENU}** Raspberry Pi detected; modifying libssl-dev repository ** ${NORMAL}"
-    		sudo apt-get remove -y libssl-dev
-    		sudo apt-get install -y zlib1g-dev
-    		sudo sed -i -e 's/stretch/jessie/g' /etc/apt/sources.list
-    		sudo apt-get -y update
-    		sudo apt-get install -y libssl-dev
-    		sudo sed -i -e 's/jessie/stretch/g' /etc/apt/sources.list
-  	        sudo apt-get -y update
+		isOSpi=$(cat /etc/os-release 2>/dev/null |grep ^VERSION_CODENAME= | awk -F= '{print $2}')
+		if [[ "$isOSpi” == “buster” ]];
+		   then
+			sudo apt-get remove -y libssl-dev
+			sudo apt-get install -y zlib1g-dev
+			sudo sed -i -e “s/buster/jessie/g” /etc/apt/sources.list
+			sudo apt-get -y update
+			sudo apt-get install -y libssl-dev=1.0.1*
+			sudo sed -i -e “s/jessie/buster/g” /etc/apt/sources.list
+		      sudo apt-get -y update
+		fi
+
+		if [[ "$isOSpi” == “stretch” ]];
+		   then
+			sudo apt-get remove -y libssl-dev
+			sudo apt-get install -y zlib1g-dev
+			sudo sed -i -e “s/stretch/jessie/g” /etc/apt/sources.list
+			sudo apt-get -y update
+			sudo apt-get install -y libssl-dev=1.0.1*
+			sudo sed -i -e “s/jessie/stretch/g” /etc/apt/sources.list
+		      sudo apt-get -y update
+		fi	
 
 		lineSwap=$(awk '/MemTotal/ { print $2 }' /proc/meminfo)
 
@@ -387,23 +366,6 @@ option_picked "Install EUNO GUI Wallet on Raspberry Pi";
                 else
                         git clone https://github.com/Euno/eunowallet.git
                 fi
-
-		echo ""
-		echo -e "${MENU} ** Compiling LevelDB ** ${NORMAL}"
-		cd ~/eunowallet/src/leveldb
-		make clean
-		chmod +x build_detect_platform
-		make libleveldb.a libmemenv.a
-
-		echo ""
-		echo -e "${MENU} ** Compiling SECP256 ** ${NORMAL}"
-		cd ~/eunowallet/src/secp256k1
-		make clean
-		chmod +x autogen.sh
-		./autogen.sh
-		./configure --prefix=/usr
-		make
-		sudo make install
 
 		echo ""
 		echo -e "${MENU} ** Compiling EUNO Wallet (may take a while) ** ${NORMAL}"
