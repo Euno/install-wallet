@@ -218,25 +218,25 @@ euno_raspberry_cli(){
 
     		echo -e "${MENU}** Raspberry Pi detected; modifying libssl-dev repository ** ${NORMAL}"
 		isOSpi=$(cat /etc/os-release 2>/dev/null |grep ^VERSION_CODENAME= | awk -F= '{print $2}')
-		if [[ "$isOSpi” == “buster” ]];
+		if [[ "$isOSpi" == "buster" ]];
 		   then
 			sudo apt-get remove -y libssl-dev
 			sudo apt-get install -y zlib1g-dev
-			sudo sed -i -e “s/buster/jessie/g” /etc/apt/sources.list
+			sudo sed -i -e "s/buster/jessie/g" /etc/apt/sources.list
 			sudo apt-get -y update
 			sudo apt-get install -y libssl-dev=1.0.1*
-			sudo sed -i -e “s/jessie/buster/g” /etc/apt/sources.list
+			sudo sed -i -e "s/jessie/buster/g" /etc/apt/sources.list
 		      sudo apt-get -y update
 		fi
 
-		if [[ "$isOSpi” == “stretch” ]];
+		if [[ "$isOSpi" == "stretch" ]];
 		   then
 			sudo apt-get remove -y libssl-dev
 			sudo apt-get install -y zlib1g-dev
-			sudo sed -i -e “s/stretch/jessie/g” /etc/apt/sources.list
+			sudo sed -i -e "s/stretch/jessie/g" /etc/apt/sources.list
 			sudo apt-get -y update
 			sudo apt-get install -y libssl-dev=1.0.1*
-			sudo sed -i -e “s/jessie/stretch/g” /etc/apt/sources.list
+			sudo sed -i -e "s/jessie/stretch/g" /etc/apt/sources.list
 		      sudo apt-get -y update
 		fi
 
@@ -321,25 +321,25 @@ option_picked "Install EUNO GUI Wallet on Raspberry Pi";
 
     		echo -e "${MENU}** Raspberry Pi detected; modifying libssl-dev repository ** ${NORMAL}"
 		isOSpi=$(cat /etc/os-release 2>/dev/null |grep ^VERSION_CODENAME= | awk -F= '{print $2}')
-		if [[ "$isOSpi” == “buster” ]];
+		if [[ "$isOSpi" == "buster" ]];
 		   then
 			sudo apt-get remove -y libssl-dev
 			sudo apt-get install -y zlib1g-dev
-			sudo sed -i -e “s/buster/jessie/g” /etc/apt/sources.list
+			sudo sed -i -e "s/buster/jessie/g" /etc/apt/sources.list
 			sudo apt-get -y update
 			sudo apt-get install -y libssl-dev=1.0.1*
-			sudo sed -i -e “s/jessie/buster/g” /etc/apt/sources.list
+			sudo sed -i -e "s/jessie/buster/g" /etc/apt/sources.list
 		      sudo apt-get -y update
 		fi
 
-		if [[ "$isOSpi” == “stretch” ]];
+		if [[ "$isOSpi" == "stretch" ]];
 		   then
 			sudo apt-get remove -y libssl-dev
 			sudo apt-get install -y zlib1g-dev
-			sudo sed -i -e “s/stretch/jessie/g” /etc/apt/sources.list
+			sudo sed -i -e "s/stretch/jessie/g" /etc/apt/sources.list
 			sudo apt-get -y update
 			sudo apt-get install -y libssl-dev=1.0.1*
-			sudo sed -i -e “s/jessie/stretch/g” /etc/apt/sources.list
+			sudo sed -i -e "s/jessie/stretch/g" /etc/apt/sources.list
 		      sudo apt-get -y update
 		fi	
 
