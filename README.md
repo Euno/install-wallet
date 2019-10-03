@@ -29,7 +29,7 @@
 
 
 <br><br>
-### Automatic script to compile EUNO wallet/node on Raspberry PI and Ubuntu 16.04
+### Automatic script to compile EUNO wallet/node on Raspberry PI, Ubuntu 16.04 and Ubuntu 18.04
 
 ### Usage:
     
@@ -46,6 +46,7 @@
 <br>
 Tested on:
 
-  * Ubuntu 16.04
+  * Ubuntu 16.04 
+  * Ubuntu 18.04 
   * Raspberry PI 2 & 3 with Raspbian Stretch
 <br>
