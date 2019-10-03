@@ -3,12 +3,13 @@
 # Original Author: Euno DevTeam
 # Github: https://github.com/Euno/install-wallet
 # Web: https://euno.co/
-# Version: 1.0
+# Version: 1.1
 #
 # Usage: ./install-wallet.sh 
 # 
 # Tested on:
 # Ubuntu 16.04
+# Ubuntu 18.04
 # Raspberry PI 2 & 3 with Raspbian Stretch
 #
 ################################################################################
@@ -32,10 +33,17 @@ show_menu(){
     	echo -e "${MENU}** EUNO - A privacy based cryptocurrency | https://euno.co/ **${NORMAL}"
     	echo ""
     	echo -e "${MENU}****************************************************${NORMAL}"
+    	echo -e "${NUMBER}Ubuntu 16.04${NORMAL}"
     	echo -e "${MENU}**${NUMBER} 1)${MENU} Install EUNO CLI Wallet on Ubuntu LTS 16.04 **${NORMAL}"
     	echo -e "${MENU}**${NUMBER} 2)${MENU} Install EUNO GUI Wallet on Ubuntu LTS 16.04 **${NORMAL}"
-    	echo -e "${MENU}**${NUMBER} 3)${MENU} Install EUNO CLI Wallet on Raspberry Pi     **${NORMAL}"
-    	echo -e "${MENU}**${NUMBER} 4)${MENU} Install EUNO GUI Wallet on Raspberry Pi     **${NORMAL}"
+    	echo ""
+    	echo -e "${NUMBER}Ubuntu 18.04${NORMAL}"
+    	echo -e "${MENU}**${NUMBER} 3)${MENU} Install EUNO CLI Wallet on Ubuntu LTS 18.04 **${NORMAL}"
+    	echo -e "${MENU}**${NUMBER} 4)${MENU} Install EUNO GUI Wallet on Ubuntu LTS 18.04 **${NORMAL}"
+    	echo ""
+    	echo -e "${NUMBER}Raspbian${NORMAL}"
+    	echo -e "${MENU}**${NUMBER} 5)${MENU} Install EUNO CLI Wallet on Raspberry Pi     **${NORMAL}"
+    	echo -e "${MENU}**${NUMBER} 6)${MENU} Install EUNO GUI Wallet on Raspberry Pi     **${NORMAL}"
     	echo -e "${MENU}****************************************************${NORMAL}"
     	echo -e "${YELLOW}Please enter a menu option and enter or ${RED_TEXT}enter to exit. ${NORMAL}"
     	read opt
@@ -189,6 +197,163 @@ euno_ubuntu_gui(){
 		exit 1;
 	fi
 	
+	if [[ -f ~/eunowallet/euno-qt ]]; then
+		echo ""
+		echo -e "${MENU} ** Done! ** ${NORMAL}"
+		echo -e "${MENU} ** Euno Wallet Daemon: ~/eunowallet/euno-qt ** ${NORMAL}"
+		echo -e "${MENU} ** Euno Data Folder: cd ~/.euno/ ** ${NORMAL}"
+		echo -e "${MENU} ** Euno Wallet Default Config File: cd ~/.euno/euno.conf ** ${NORMAL}"
+		echo -e "${YELLOW} ** To Start: ~/eunowallet/euno-qt ** ${NORMAL}"
+		exit 0;
+	else
+		echo ""
+		echo -e "${RED_TEXT}ERROR! Scroll up for details. ${NORMAL}"
+		exit 1;
+
+	fi
+}
+
+euno_ubuntu_1804_cli(){
+	option_picked "Install EUNO CLI Wallet on Ubuntu LTS 18.04";
+	isOS=$(cat /etc/os-release 2>/dev/null |grep ^ID= | awk -F= '{print $2}')
+	if [[ "$isOS" == "ubuntu" ]];
+	   then
+		echo -e "${MENU}** Install all necessary packages for building EUNO ** ${NORMAL}"
+		sudo apt-get install -y automake dnsutils
+		sudo apt-get install -y build-essential libssl1.0-dev libboost-all-dev git
+		sudo apt-get install -y libdb5.3++-dev libminiupnpc-dev screen autoconf
+		sudo apt-get install -y unzip
+
+		lineSwap=$(awk '/MemTotal/ { print $2 }' /proc/meminfo)
+
+		if [ $lineSwap -le 1200000 ] ;
+ 		   then
+   			echo -e "${MENU} ** Not enought RAM, so creating a 2 Gb swap file ** ${NORMAL}"
+   			sudo /bin/dd if=/dev/zero of=/var/swap.1 bs=1M count=2048
+   			sudo /sbin/mkswap /var/swap.1
+   			sudo chmod 600 /var/swap.1
+   			sudo /sbin/swapon /var/swap.1
+    			sudo echo "/var/swap.1 swap swap defaults 0 0" >> /etc/fstab
+		fi
+
+		echo ""
+		echo -e "${MENU} ** Downloading EUNO source code from Github ** ${NORMAL}"
+		cd ~
+
+		if [[ -d ~/eunowallet ]]; then
+			cd ~/eunowallet
+			echo -e "${MENU} ** Git pull ** ${NORMAL}"
+			git pull
+		else
+			git clone https://github.com/Euno/eunowallet.git
+		fi
+
+		echo ""
+		echo -e "${MENU} ** Compiling EUNO Wallet (may take a while) ** ${NORMAL}"
+		mkdir ~/.euno/ 2>/dev/null
+		cd ~/eunowallet/src/
+		sudo make -f makefile.unix
+		cp eunod ~/eunowallet/;
+
+		if [[ -f ~/.euno/euno.conf ]]; then
+			echo -e "${MENU} ** euno.conf already exists! ** ${NORMAL}";
+		   else
+			rpcuservar=$(date +%s | sha256sum | base64 | head -c 32)
+			rpcpassvar=$(tr -cd '[:alnum:]' < /dev/urandom | fold -w30 | head -n1)
+			echo ""
+			echo -e "${MENU} ** Creating default euno.conf file! ** ${NORMAL}"
+			echo "rpcallowip=127.0.0.1" >> ~/.euno/euno.conf
+			echo "rpcuser=${rpcuservar}" >> ~/.euno/euno.conf
+			echo "rpcpassword=${rpcpassvar}" >> ~/.euno/euno.conf
+			echo "listen=1" >> ~/.euno/euno.conf
+			echo "server=1" >> ~/.euno/euno.conf
+			curl https://euno.co/nodes.txt >> ~/.euno/euno.conf
+		fi
+	   else
+		echo ""
+		echo -e "${RED_TEXT}OS is not Ubuntu ${NORMAL}";
+		exit 1;
+	fi
+
+	if [[ -f ~/eunowallet/eunod ]]; then
+		echo ""
+		echo -e "${MENU} ** Done! ** ${NORMAL}"
+		echo -e "${MENU} ** Euno Wallet Daemon: ~/eunowallet/eunod ** ${NORMAL}"
+		echo -e "${MENU} ** Euno Data Folder: cd ~/.euno/ ** ${NORMAL}"
+		echo -e "${MENU} ** Euno Wallet Default Config File: cd ~/.euno/euno.conf ** ${NORMAL}"
+		echo -e "${YELLOW} ** To Start: ~/eunowallet/eunod -daemon -start ** ${NORMAL}"
+		exit 0;
+	else
+		echo ""
+		echo -e "${RED_TEXT}ERROR! Scroll up for details. ${NORMAL}"
+		exit 1;
+
+	fi
+}
+
+euno_ubuntu_1804_gui(){
+	option_picked "Install EUNO GUI Wallet on Ubuntu LTS 18.04";
+	isOS=$(cat /etc/os-release 2>/dev/null |grep ^ID= | awk -F= '{print $2}')
+	if [[ "$isOS" == "ubuntu" ]];
+	   then
+		echo -e "${MENU}** Install all necessary packages for building EUNO ** ${NORMAL}"
+		sudo apt-get install -y automake dnsutils
+		sudo apt-get install -y build-essential libssl1.0-dev libboost-all-dev git
+		sudo apt-get install -y libdb5.3++-dev libminiupnpc-dev screen autoconf
+		sudo apt-get install -y unzip
+		sudo apt-get install -y qt5-default qttools5-dev-tools
+
+		lineSwap=$(awk '/MemTotal/ { print $2 }' /proc/meminfo)
+
+		if [ $lineSwap -le 1200000 ] ;
+ 		   then
+   			echo -e "${MENU} ** Not enought RAM, so creating a 2 Gb swap file ** ${NORMAL}"
+   			sudo /bin/dd if=/dev/zero of=/var/swap.1 bs=1M count=2048
+   			sudo /sbin/mkswap /var/swap.1
+   			sudo chmod 600 /var/swap.1
+   			sudo /sbin/swapon /var/swap.1
+    			sudo echo "/var/swap.1 swap swap defaults 0 0" >> /etc/fstab
+		fi
+
+		echo ""
+		echo -e "${MENU} ** Downloading EUNO source code from Github ** ${NORMAL}"
+		cd ~
+
+                if [[ -d ~/eunowallet ]]; then
+                        cd ~/eunowallet
+                        echo -e "${MENU} ** Git pull ** ${NORMAL}"
+                        git pull
+                else
+                        git clone https://github.com/Euno/eunowallet.git
+                fi
+
+		echo ""
+		echo -e "${MENU} ** Compiling EUNO Wallet (may take a while) ** ${NORMAL}"
+		mkdir ~/.euno/ 2>/dev/null
+		cd ~/eunowallet/
+		qmake -o Makefile euno.pro
+		make
+
+		if [[ -f ~/.euno/euno.conf ]]; then
+			echo -e "${MENU} ** euno.conf already exists! ** ${NORMAL}";
+		   else
+			rpcuservar=$(date +%s | sha256sum | base64 | head -c 32)
+			rpcpassvar=$(tr -cd '[:alnum:]' < /dev/urandom | fold -w30 | head -n1)
+			echo ""
+			echo -e "${MENU} ** Creating default euno.conf file! ** ${NORMAL}"
+			echo "rpcallowip=127.0.0.1" >> ~/.euno/euno.conf
+			echo "rpcuser=${rpcuservar}" >> ~/.euno/euno.conf
+			echo "rpcpassword=${rpcpassvar}" >> ~/.euno/euno.conf
+			echo "listen=1" >> ~/.euno/euno.conf
+			echo "server=1" >> ~/.euno/euno.conf
+			curl https://euno.co/nodes.txt >> ~/.euno/euno.conf
+		fi
+	   else
+		echo ""
+		echo -e "${RED_TEXT}OS is not Ubuntu ${NORMAL}";
+		exit 1;
+	fi
+
 	if [[ -f ~/eunowallet/euno-qt ]]; then
 		echo ""
 		echo -e "${MENU} ** Done! ** ${NORMAL}"
@@ -422,19 +587,27 @@ while [ opt != '' ]
     else
         case $opt in
         1) clear;
-	    euno_ubuntu_cli;
+	          euno_ubuntu_cli;
             ;;
 
         2) clear;
-	    euno_ubuntu_gui;
+	          euno_ubuntu_gui;
             ;;
 
         3) clear;
-            euno_raspberry_cli;
+	          euno_ubuntu_1804_cli;
             ;;
 
         4) clear;
-	    euno_raspberry_gui;
+          euno_ubuntu_1804_gui;
+          ;;
+
+        5) clear;
+            euno_raspberry_cli;
+            ;;
+
+        6) clear;
+	          euno_raspberry_gui;
             ;;
 
         x)exit;
